@@ -77,14 +77,15 @@ var svg = d3.select("#floor-plan-container").append("svg")
 svg.on("click", function () {
     let coords = d3.mouse(this);
 
-    if (features.nodes.length > 1) {
+    if (features.nodes.length > 1 && (findNodeCollision(coords[0], coords[1]) || lineStartNodeID)) {
         // Checking if click is within an existing node
-        if (!lineStartNodeID) {
+        console.log(lineStartNodeID);
+        if (!lineStartNodeID && findNodeCollision(coords[0], coords[1])) {
             lineStartNodeID = findNodeCollision(coords[0], coords[1]);
-            console.log(lineStartNodeID);
+            console.log("after" + lineStartNodeID);
         }
         // We already know that a line is started, so now to find the endpoint.
-        if (lineStartNodeID && findNodeCollision(coords[0], coords[1])) {
+        else if (lineStartNodeID) {
             let startNode = findNode(lineStartNodeID);
             let closestNodeID = findClosestNode(coords[0], coords[1]);
             let endNode = findNode(closestNodeID);
@@ -101,29 +102,31 @@ svg.on("click", function () {
         }
     }
 
-    let newNode = {
-        nodeID: ++nodeCounter,
-        nodeType: 0,
-        r: 5,
-        x: coords[0],
-        y: coords[1]
-    };
-    features.nodes.push(newNode);
+    //Make a new node
+    else {
+        let newNode = {
+            nodeID: ++nodeCounter,
+            nodeType: 0,
+            r: 5,
+            x: coords[0],
+            y: coords[1]
+        };
+        features.nodes.push(newNode);
 
-    let circle = svg.append("circle")
-        .attr("cx", newNode.x)
-        .attr("cy", newNode.y)
-        .attr("r", newNode.r)
-        .style("fill", function (d) {
-            return nodeTypes[newNode.nodeType].color;
-        })
+        let circle = svg.append("circle")
+            .attr("cx", newNode.x)
+            .attr("cy", newNode.y)
+            .attr("r", newNode.r)
+            .style("fill", function (d) {
+                return nodeTypes[newNode.nodeType].color;
+            })
+    }
 });
 
 //This function returns a nodeID if a click is within an existing node
 function findNodeCollision(x, y) {
     for (let node of features.nodes) {
         let dist = Math.hypot(x - node.x, y - node.y);
-        console.log(dist);
         if (dist < node.r) {
             return node.nodeID;
         }
