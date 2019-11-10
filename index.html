@@ -2,29 +2,62 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" type="text/css" href="index.css"/>
+    <link rel="stylesheet" type="text/css" href="settings-modal.css"/>
     <meta charset="UTF-8">
     <title>Vertex Test</title>
 </head>
 <body>
 <div id="header-container" style="background-color: darkblue; height: 4.25em;">
-    <h1>Vertex Test</h1>
+    <h1 id="vertex-title">Vertex Test</h1>
     <div id="header-button-container">
         <button style="" onclick="document.getElementById('floor-plan-upload-input').click();">Upload Floor Plan
         </button>
         <input id="floor-plan-upload-input" type="file" style="display: none;" onchange="openImage()">
         <button style="">Import Drawing</button>
         <button style="" onclick="downloadData()">Download Drawing</button>
+        <button id="open-settings-button">Settings</button>
         <a style="display: none" id="downloadAnchor"></a>
     </div>
 </div>
+<div id="sidebar-container">
+    <button id="sidebar-node">node</button>
+    <button id="sidebar-line">line</button>
+</div>
 <div id="floor-plan-container">
+    <!-- TODO Remove src -->
     <img src="floor%20plan.jpg" alt="Floor Plan" id="floor-plan-background">
     <!-- TODO testing--remove later -->
 <!--    <img src="" alt="Floor Plan" style="width: 1000px; height: 800px;" id="floor-plan-background">-->
 </div>
-<!-- TODO Remove src -->
 
+<div id="settings-dialog" class="modal">
+    <div class="modal-content">
+        <span class="close">&times</span>
+        <h1>Settings</h1>
+        <button id="settings-node-tab" onclick="openNodeMenu()">Node</button>
+        <button id="settings-line-tab" onclick="openLineMenu()">Line</button>
+        <div id="node-settings-area" class="settings-area">
+            <label for="node-type-select">Node Type</label>
+            <select id="node-type-select"></select>
+            <br>
+            <label for="node-name-input">Name</label>
+            <input id="node-name-input" onchange="autoSaveNodeTypes()">
+            <br>
+            <label for="node-shape-select">Shape</label>
+            <select id="node-shape-select" onchange="autoSaveNodeTypes()">
+                <option value="circle">Circle</option>
+                <option value="rect">Square</option>
+            </select>
+            <br>
+            <label for="node-color-select">Color</label>
+            <select id="node-color-select" onchange="autoSaveNodeTypes()"></select>
+        </div>
+    </div>
+</div>
+
+<script src="css-color-names.js"></script>
 <script src="d3.js"></script>
+<script src="settings-modal.js"></script>
 <script src="index.js"></script>
 </body>
 </html>

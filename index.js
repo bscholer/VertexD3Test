@@ -5,48 +5,6 @@ let features = {
     "lines": []
 };
 
-let nodeTypes = [
-    {
-        name: "node0",
-        color: "red"
-    },
-    {
-        name: "node1",
-        color: "pink"
-    },
-    {
-        name: "node2",
-        color: "green"
-    },
-    {
-        name: "node3",
-        color: "orange"
-    },
-    {
-        name: "node4",
-        color: "teal"
-    },
-    {
-        name: "node5",
-        color: "lightsalmon"
-    },
-    {
-        name: "node6",
-        color: "purple"
-    },
-    {
-        name: "node7",
-        color: "blueviolet"
-    },
-    {
-        name: "node8",
-        color: "darkgreen"
-    },
-    {
-        name: "node9",
-        color: "skyblue"
-    },
-];
 // TODO this needs to be update when loading in data
 let nodeCounter = 0;
 
@@ -113,6 +71,7 @@ svg.on("click", function () {
     else {
         let newNode = {
             nodeID: ++nodeCounter,
+            name: "",
             nodeType: 0,
             r: 10,
             x: coords[0],
