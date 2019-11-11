@@ -16,6 +16,7 @@
         <button style="">Import Drawing</button>
         <button style="" onclick="downloadData()">Download Drawing</button>
         <button id="open-settings-button">Settings</button>
+        <button onclick="clearDrawing()">Clear</button>
         <a style="display: none" id="downloadAnchor"></a>
     </div>
 </div>
@@ -51,6 +52,26 @@
             <br>
             <label for="node-color-select">Color</label>
             <select id="node-color-select" onchange="autoSaveNodeTypes()"></select>
+        </div>
+        <div id="line-settings-area" class="settings-area">
+            <label for="line-type-select">Line Type</label>
+            <select id="line-type-select"></select>
+            <br>
+            <label for="line-name-input">Name</label>
+            <input id="line-name-input" onchange="autoSaveLineTypes()">
+            <br>
+            <label for="line-stroke-select">Stroke</label>
+            <select id="line-stroke-select" onchange="autoSaveLineTypes()">
+                <option value="solid">Solid</option>
+                <option value="dashed">Dashed</option>
+                <option value="dotted">Dotted</option>
+            </select>
+            <br>
+            <label for="line-color-select">Color</label>
+            <select id="line-color-select" onchange="autoSaveLineTypes()"></select>
+            <br>
+            <label for="line-weight-input">Weight (px)</label>
+            <input id="line-weight-input" onchange="autoSaveLineTypes()">
         </div>
     </div>
 </div>

@@ -2,7 +2,8 @@ let floorPlanBackground = document.querySelector('#floor-plan-background');
 let features = {
     "floorPlanBounds": {},
     "nodes": [],
-    "lines": []
+    "lines": [],
+    "floorPlanSrc": "floor%20plan.jpg"
 };
 
 // TODO this needs to be update when loading in data
@@ -12,12 +13,12 @@ let nodeCounter = 0;
 let lineStartNodeID;
 
 function openImage() {
-    console.log("sup");
     let file = document.querySelector('#floor-plan-upload-input').files[0];
     let reader = new FileReader();
 
     reader.addEventListener("load", function () {
         floorPlanBackground.src = reader.result;
+        features.floorPlanSrc = reader.result;
     });
 
     if (file) {
@@ -48,22 +49,13 @@ svg.on("click", function () {
             let closestNodeID = findClosestNode(coords[0], coords[1]);
             let endNode = findNode(closestNodeID);
             let newLine = {
+                lineTypeID: "0",
                 startNodeID: startNode.nodeID,
-                endNodeID: endNode.nodeID,
-                stroke: 5,
-                color: "orange"
+                endNodeID: endNode.nodeID
             };
-            console.log(newLine);
-            console.log(startNode);
-            svg.append("line")
-                .attr("x1", startNode.x)
-                .attr("y1", startNode.y)
-                .attr("x2", endNode.x)
-                .attr("y2", endNode.y)
-                .attr("stroke-width", newLine.stroke)
-                .attr("stroke", newLine.color);
             lineStartNodeID = null;
             features.lines.push(newLine);
+            drawLine(newLine);
         }
     }
 
@@ -72,28 +64,64 @@ svg.on("click", function () {
         let newNode = {
             nodeID: ++nodeCounter,
             name: "",
-            nodeType: 0,
-            r: 10,
+            nodeTypeID: "0",
+            size: 10,
             x: coords[0],
             y: coords[1]
         };
         features.nodes.push(newNode);
-
-        let circle = svg.append("circle")
-            .attr("cx", newNode.x)
-            .attr("cy", newNode.y)
-            .attr("r", newNode.r)
-            .style("fill", function (d) {
-                return nodeTypes[newNode.nodeType].color;
-            })
+        drawNode(newNode);
     }
 });
+
+function drawLine(line) {
+    for (let lineType of lineTypes) {
+        if (line.lineTypeID === lineType.lineTypeID) {
+            let startNode = findNode(line.startNodeID);
+            let endNode = findNode(line.endNodeID);
+            let newLine = svg.append("line")
+                .attr("x1", startNode.x)
+                .attr("y1", startNode.y)
+                .attr("x2", endNode.x)
+                .attr("y2", endNode.y)
+                .attr("stroke-width", lineType.weight)
+                .attr("stroke", lineType.color);
+            if (lineType.stroke === "dashed") {
+                newLine.style("stroke-dasharray", ("10, 3"))
+            }
+            else if (lineType.stroke === "dotted") {
+                newLine.style("stroke-dasharray", ("3, 3"))
+            }
+        }
+    }
+}
+
+function drawNode(node) {
+    for (let nodeType of nodeTypes) {
+        if (node.nodeTypeID === nodeType.nodeTypeID) {
+            if (nodeType.shape === "rect") {
+                let rect = svg.append("rect")
+                    .attr("x", (node.x - node.size))
+                    .attr("y", (node.y - node.size))
+                    .attr("width", node.size * 2)
+                    .attr("height", node.size * 2)
+                    .style("fill", nodeType.color);
+            } else if (nodeType.shape === "circle") {
+                let circle = svg.append("circle")
+                    .attr("cx", node.x)
+                    .attr("cy", node.y)
+                    .attr("r", node.size)
+                    .style("fill", nodeType.color)
+            }
+        }
+    }
+}
 
 //This function returns a nodeID if a click is within an existing node
 function findNodeCollision(x, y) {
     for (let node of features.nodes) {
         let dist = Math.hypot(x - node.x, y - node.y);
-        if (dist < node.r) {
+        if (dist < node.size) {
             return node.nodeID;
         }
     }
@@ -122,35 +150,30 @@ function findNode(nodeID) {
     }
 }
 
-// svg.on("mousedown", function () {
-//     let orgCoords = d3.mouse(this);
-//     d3.select(this).classed("active", true);
-//     let w = d3.select(window)
-//         .on("mousemove", mousemove)
-//         .on("mouseup", mouseup);
-//
-//     function mousemove() {
-//         let newCoords = d3.mouse(this);
-//         console.log(d3.mouse(svg.node()));
-//         let line = svg.append("line")
-//             .attr("x1", orgCoords[0])
-//             .attr("y1", orgCoords[1])
-//             .attr("x2", newCoords[0])
-//             .attr("y2", newCoords[1])
-//             .attr("stroke-width", 2)
-//             .attr("stroke", "black");
-//     }
-//
-//     function mouseup() {
-//         div.classed("active", false);
-//         w.on("mousemove", null).on("mouseup", null)
-//     }
-// })
-
 function downloadData() {
     let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(features));
     let downloadAnchor = document.getElementById("downloadAnchor");
     downloadAnchor.setAttribute("href", dataStr);
     downloadAnchor.setAttribute("download", "features.json");
     downloadAnchor.click();
+}
+
+function drawFeatures(features) {
+    svg.width = features.floorPlanBounds.w;
+    svg.height = features.floorPlanBounds.h;
+    floorPlanBackground.src = "";
+    floorPlanBackground.src = features.floorPlanSrc;
+    for (let node of features.nodes) {
+        drawNode(node);
+    }
+    for (let line of features.lines) {
+        drawLine(line);
+    }
+}
+
+function clearDrawing() {
+    let canvas = document.querySelector("svg");
+    while (canvas.firstChild) {
+        canvas.removeChild(canvas.firstChild);
+    }
 }

@@ -68,6 +68,85 @@ else {
     localStorage.setItem("nodeTypes", JSON.stringify(nodeTypes));
 }
 
+if (localStorage.getItem("lineTypes")) {
+    lineTypes = JSON.parse(localStorage.getItem("lineTypes"));
+}
+else {
+    lineTypes = [
+        {
+            lineTypeID: "0",
+            name: "line0",
+            color: "pink",
+            weight: 5,
+            stroke: "solid"
+        },
+        {
+            lineTypeID: "1",
+            name: "line1",
+            color: "blue",
+            weight: 5,
+            stroke: "solid"
+        },
+        {
+            lineTypeID: "2",
+            name: "line2",
+            color: "skyblue",
+            weight: 5,
+            stroke: "dashed"
+        },
+        {
+            lineTypeID: "3",
+            name: "line3",
+            color: "green",
+            weight: 5,
+            stroke: "dashed"
+        },
+        {
+            lineTypeID: "4",
+            name: "line4",
+            color: "teal",
+            weight: 5,
+            stroke: "dashed"
+        },
+        {
+            lineTypeID: "5",
+            name: "line5",
+            color: "orange",
+            weight: 5,
+            stroke: "dashed"
+        },
+        {
+            lineTypeID: "6",
+            name: "line6",
+            color: "lightsalmon",
+            weight: 5,
+            stroke: "dashed"
+        },
+        {
+            lineTypeID: "7",
+            name: "line7",
+            color: "coral",
+            weight: 5,
+            stroke: "dotted"
+        },
+        {
+            lineTypeID: "8",
+            name: "line8",
+            color: "blueviolet",
+            weight: 5,
+            stroke: "dotted"
+        },
+        {
+            lineTypeID: "9",
+            name: "line9",
+            color: "crimson",
+            weight: 5,
+            stroke: "dotted"
+        },
+    ];
+    localStorage.setItem("lineTypes", JSON.stringify(lineTypes));
+}
+
 // Get the modal
 var modal = document.getElementById("settings-dialog");
 
@@ -81,13 +160,26 @@ var span = document.getElementsByClassName("close")[0];
 var nodeTabBtn = document.getElementById("settings-node-tab");
 var lineTabBtn = document.getElementById("settings-line-tab");
 
+// Get the node and line menus
+var nodeMenu = document.getElementById("node-settings-area");
+var lineMenu = document.getElementById("line-settings-area");
+
 // Get the components of the node menu
 var nodeTypeSelect = document.getElementById("node-type-select");
 var nodeNameInput = document.getElementById("node-name-input");
 var nodeShapeSelect = document.getElementById("node-shape-select");
 var nodeColorSelect = document.getElementById("node-color-select");
 
+// Get the components of the line menu
+var lineTypeSelect = document.getElementById("line-type-select");
+var lineNameInput = document.getElementById("line-name-input");
+var lineStrokeSelect = document.getElementById("line-stroke-select");
+var lineColorSelect = document.getElementById("line-color-select");
+var lineWeightInput = document.getElementById("line-weight-input");
+
 function openNodeMenu (nodeTypeID) {
+    nodeMenu.style.display = "block";
+    lineMenu.style.display = "none";
     while (nodeTypeSelect.firstChild) {
         nodeTypeSelect.removeChild(nodeTypeSelect.firstChild);
     }
@@ -102,6 +194,23 @@ function openNodeMenu (nodeTypeID) {
     populateNodeMenu(nodeTypeID);
 }
 
+function openLineMenu (lineTypeID) {
+    nodeMenu.style.display = "none";
+    lineMenu.style.display = "block";
+    while (lineTypeSelect.firstChild) {
+        lineTypeSelect.removeChild(lineTypeSelect.firstChild);
+    }
+    for (let lineType of lineTypes) {
+        let newLineTypeOption = document.createElement("option");
+        newLineTypeOption.value = lineType.lineTypeID;
+        newLineTypeOption.innerText = lineType.name;
+        lineTypeSelect.appendChild(newLineTypeOption);
+    }
+    if (!lineTypeID) lineTypeID = 0;
+    lineTypeSelect.value = lineTypeID;
+    populateLineMenu(lineTypeID);
+}
+
 function populateNodeMenu (nodeTypeID) {
     populateColorSelect(nodeColorSelect);
     for (let nodeType of nodeTypes) {
@@ -113,8 +222,17 @@ function populateNodeMenu (nodeTypeID) {
     }
 }
 
-function openLineMenu () {
-
+function populateLineMenu (lineTypeID) {
+    populateColorSelect(lineColorSelect);
+    for (let lineType of lineTypes) {
+        if (lineType.lineTypeID === lineTypeID + "") {
+            lineNameInput.value = lineType.name;
+            console.log(lineType.stroke);
+            lineStrokeSelect.value = lineType.stroke;
+            lineColorSelect.value = lineType.color;
+            lineWeightInput.value = lineType.weight;
+        }
+    }
 }
 
 // When the user clicks on the button, open the modal
@@ -146,6 +264,7 @@ function populateColorSelect (selectElement) {
     }
 }
 
+// TODO re-render nodes
 function autoSaveNodeTypes() {
     for (let nodeType of nodeTypes) {
         if (nodeTypeSelect.value === nodeType.nodeTypeID) {
@@ -156,4 +275,25 @@ function autoSaveNodeTypes() {
     }
     localStorage.setItem("nodeTypes", JSON.stringify(nodeTypes));
     openNodeMenu(nodeTypeSelect.value);
+    reset();
+}
+
+// TODO re-render lines
+function autoSaveLineTypes() {
+    for (let lineType of lineTypes) {
+        if (lineTypeSelect.value === lineType.lineTypeID) {
+            lineType.name = lineNameInput.value;
+            lineType.stroke = lineStrokeSelect.value;
+            lineType.color = lineColorSelect.value;
+            lineType.weight = lineWeightInput.value;
+        }
+    }
+    localStorage.setItem("lineTypes", JSON.stringify(lineTypes));
+    openLineMenu(lineTypeSelect.value);
+    reset();
+}
+
+function reset() {
+    clearDrawing();
+    drawFeatures(features);
 }
