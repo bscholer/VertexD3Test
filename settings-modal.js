@@ -129,7 +129,6 @@ function populateColorSelect (selectElement) {
     }
 }
 
-// TODO re-render nodes
 function autoSaveNodeTypes() {
     for (let nodeType of features.nodeTypes) {
         if (nodeTypeSelect.value === nodeType.nodeTypeID) {
@@ -140,10 +139,9 @@ function autoSaveNodeTypes() {
     }
     localStorage.setItem("nodeTypes", JSON.stringify(features.nodeTypes));
     openNodeMenu(nodeTypeSelect.value);
-    reset();
+    reset(svg);
 }
 
-// TODO re-render lines
 function autoSaveLineTypes() {
     for (let lineType of features.lineTypes) {
         if (lineTypeSelect.value === lineType.lineTypeID) {
@@ -155,10 +153,6 @@ function autoSaveLineTypes() {
     }
     localStorage.setItem("lineTypes", JSON.stringify(features.lineTypes));
     openLineMenu(lineTypeSelect.value);
-    reset();
+    reset(svg);
 }
 
-function reset() {
-    clearDrawing();
-    drawFeatures(features);
-}

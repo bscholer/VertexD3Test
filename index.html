@@ -15,10 +15,10 @@
         </button>
         <input id="floor-plan-upload-input" type="file" style="display: none;" onchange="openImage()">
         <button style="">Import Drawing</button>
-        <button style="" onclick="downloadData()">Download Drawing</button>
+        <button style="" onclick="downloadDrawing()">Download Drawing</button>
+        <a style="display: none" id="downloadDrawingAnchor"></a>
         <button id="open-settings-button">Settings</button>
         <button onclick="clearDrawing()">Clear</button>
-        <a style="display: none" id="downloadAnchor"></a>
         <select id="default-node-type-select" onchange="new function () {
             localStorage.setItem('defaultNodeType',
             document.getElementById('default-node-type-select').value);
@@ -135,7 +135,6 @@
             <label for="line-edit-name-input">Name</label>
             <input id="line-edit-name-input" onchange="autoSaveLines()">
             <br>
-            <!-- TODO Add start and end node ID -->
             <label for="line-edit-stroke-select">Stroke</label>
             <select id="line-edit-stroke-select" onchange="autoSaveLines()">
                 <option value="solid">Solid</option>
@@ -159,6 +158,7 @@
 <script src="d3.js"></script>
 <script src="jquery-3.4.1.min.js"></script>
 <script src="jquery.mask.min.js"></script>
+<script src="helper-functions.js"></script>
 <script src="index.js"></script>
 <script src="settings-modal.js"></script>
 <script src="node-edit-dialog.js"></script>

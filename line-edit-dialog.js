@@ -57,7 +57,7 @@ function lineEditChangeType() {
     }
     populateLineEditDialog(lineID);
     console.log(features.lines);
-    reset();
+    reset(svg);
 }
 
 function autoSaveLines() {
@@ -73,7 +73,7 @@ function autoSaveLines() {
     }
     populateLineEditDialog(lineID);
     document.getElementById("line-tooltip-title").innerText = lineEditNameInput.value;
-    reset();
+    reset(svg);
 }
 
 // When the user clicks on <span> (x), close the lineEditModal

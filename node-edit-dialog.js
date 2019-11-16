@@ -55,7 +55,7 @@ function nodeEditChangeType() {
         }
     }
     populateNodeEditDialog(nodeID);
-    reset();
+    reset(svg);
 }
 
 function autoSaveNodes() {
@@ -72,7 +72,7 @@ function autoSaveNodes() {
     }
     populateNodeEditDialog(nodeID);
     document.getElementById("node-tooltip-title").innerText = nodeEditNameInput.value;
-    reset();
+    reset(svg);
 }
 
 // When the user clicks on <span> (x), close the nodeEditModal
