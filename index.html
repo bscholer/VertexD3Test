@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="index.css"/>
     <link rel="stylesheet" type="text/css" href="settings-modal.css"/>
     <meta charset="UTF-8">
@@ -18,22 +19,40 @@
         <button id="open-settings-button">Settings</button>
         <button onclick="clearDrawing()">Clear</button>
         <a style="display: none" id="downloadAnchor"></a>
+        <select id="default-node-type-select" onchange="new function () {
+            localStorage.setItem('defaultNodeType',
+            document.getElementById('default-node-type-select').value);
+        }"></select>
+        <select id="default-line-type-select" onchange="new function () {
+            localStorage.setItem('defaultLineType',
+            document.getElementById('default-line-type-select').value);
+        }"></select>
     </div>
-</div>
-<div id="sidebar-container">
-    <button id="sidebar-node">node</button>
-    <button id="sidebar-line">line</button>
 </div>
 <div id="floor-plan-container">
     <!-- TODO Remove src -->
     <img src="floor%20plan.jpg" alt="Floor Plan" id="floor-plan-background">
     <!-- TODO testing--remove later -->
-<!--    <img src="" alt="Floor Plan" style="width: 1000px; height: 800px;" id="floor-plan-background">-->
+    <!--    <img src="" alt="Floor Plan" style="width: 1000px; height: 800px;" id="floor-plan-background">-->
+    <div id="node-tooltip" class="tooltip">
+        <div id="node-tooltip-title"></div>
+        <div id="node-tooltip-button-container" class="tooltip-button-container">
+            <a onclick="openNodeEditDialog()"><i class="material-icons md-36">edit</i></a>
+            <a onclick="deleteNode()"><i class="material-icons md-36">delete</i></a>
+        </div>
+    </div>
+    <div id="line-tooltip" class="tooltip">
+        <div id="line-tooltip-title"></div>
+        <div id="line-tooltip-button-container" class="tooltip-button-container">
+            <a onclick="openLineEditDialog()"><i class="material-icons md-36">edit</i></a>
+            <a onclick="deleteLine()"><i class="material-icons md-36">delete</i></a>
+        </div>
+    </div>
 </div>
 
 <div id="settings-dialog" class="modal">
     <div class="modal-content">
-        <span class="close">&times</span>
+        <span class="close" id="settings-dialog-close-button">&times</span>
         <h1>Settings</h1>
         <button id="settings-node-tab" onclick="openNodeMenu()">Node</button>
         <button id="settings-line-tab" onclick="openLineMenu()">Line</button>
@@ -76,9 +95,73 @@
     </div>
 </div>
 
+<div id="node-edit-dialog" class="modal">
+    <div class="modal-content">
+        <span class="close" id="node-edit-dialog-close-button">&times</span>
+        <h1 id="node-edit-dialog-title">Edit Node X</h1>
+        <div id="node-edit-area" class="settings-area">
+            <label for="node-edit-type-select">Node Type (OVERWRITES ATTRIBUTES)</label>
+            <select id="node-edit-type-select" onchange="nodeEditChangeType()"></select>
+            <br>
+            <label for="node-edit-name-input">Name</label>
+            <input id="node-edit-name-input" onchange="autoSaveNodes()">
+            <br>
+            <label for="node-edit-shape-select">Shape</label>
+            <select id="node-edit-shape-select" onchange="autoSaveNodes()">
+                <option value="circle">Circle</option>
+                <option value="rect">Square</option>
+            </select>
+            <br>
+            <label for="node-edit-color-select">Color</label>
+            <select id="node-edit-color-select" onchange="autoSaveNodes()"></select>
+            <br>
+            <label for="node-edit-size-input">Size</label>
+            <input id="node-edit-size-input" onchange="autoSaveNodes()">
+            <br>
+            <label for="node-edit-position-input">Position (x, y)</label>
+            <input id="node-edit-position-input" onchange="autoSaveNodes()">
+        </div>
+    </div>
+</div>
+
+<div id="line-edit-dialog" class="modal">
+    <div class="modal-content">
+        <span class="close" id="line-edit-dialog-close-button">&times</span>
+        <h1 id="line-edit-dialog-title">Edit Line X</h1>
+        <div id="line-edit-area" class="settings-area">
+            <label for="line-edit-type-select">Line Type (OVERWRITES ATTRIBUTES)</label>
+            <select id="line-edit-type-select" onchange="lineEditChangeType()"></select>
+            <br>
+            <label for="line-edit-name-input">Name</label>
+            <input id="line-edit-name-input" onchange="autoSaveLines()">
+            <br>
+            <!-- TODO Add start and end node ID -->
+            <label for="line-edit-stroke-select">Stroke</label>
+            <select id="line-edit-stroke-select" onchange="autoSaveLines()">
+                <option value="solid">Solid</option>
+                <option value="dashed">Dashed</option>
+                <option value="dotted">Dotted</option>
+            </select>
+            <br>
+            <label for="line-edit-weight-input">Weight</label>
+            <input id="line-edit-weight-input" onchange="autoSaveLines()">
+            <br>
+            <label for="line-edit-color-select">Color</label>
+            <select id="line-edit-color-select" onchange="autoSaveLines()"></select>
+            <br>
+            <label for="line-edit-bi-directionality-input">Bi-directionality?</label>
+            <input id="line-edit-bi-directionality-input" type="checkbox" onchange="autoSaveLines()">
+        </div>
+    </div>
+</div>
+
 <script src="css-color-names.js"></script>
 <script src="d3.js"></script>
-<script src="settings-modal.js"></script>
+<script src="jquery-3.4.1.min.js"></script>
+<script src="jquery.mask.min.js"></script>
 <script src="index.js"></script>
+<script src="settings-modal.js"></script>
+<script src="node-edit-dialog.js"></script>
+<script src="line-edit-dialog.js"></script>
 </body>
 </html>

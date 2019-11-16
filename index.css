@@ -1,3 +1,11 @@
+body {
+    font-family: Arial sans-serif !important;
+}
+
+h1 {
+    font-family: "Arial Rounded MT Bold", sans-serif !important;
+}
+
 #vertex-title {
     color: white;
     padding-top: .5em;
@@ -8,6 +16,7 @@
 }
 
 #header-button-container {
+    margin-top: 1.5em;
     float: right;
     display: inline-block;
 }
@@ -27,6 +36,7 @@ body {
 
 #floor-plan-background {
     pointer-events: none;
+    user-select: none;
 }
 
 #sidebar-container {
@@ -49,3 +59,33 @@ body {
     grid-area: line;
 }
 
+.tooltip {
+    width: calc(36px * 2 + 40px);
+    height: calc(36px + 1em);
+    border: black 1px solid;
+    background-color:#eaeaea;
+    padding: 4px;
+    position: absolute;
+    display: none;
+}
+
+.tooltip-button-container {
+    margin-right: 16px;
+    margin-left: 16px;
+}
+
+.material-icons {
+    margin-top: auto;
+    margin-bottom: auto;
+    transition: ease-in-out .2s;
+}
+
+.material-icons:hover {
+    color: #666666;
+}
+
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
