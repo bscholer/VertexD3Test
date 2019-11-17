@@ -37,26 +37,9 @@ body {
 #floor-plan-background {
     pointer-events: none;
     user-select: none;
-}
-
-#sidebar-container {
-    float: left;
-    width: 4.25em;
-    height: calc(100vh - 4.25em);
-    background-color: darkblue;
-    border-top: white 1px solid;
-    display: grid;
-    grid-template-areas: "node"
-                        "line"
-                        "none";
-}
-
-#sidebar-node {
-    grid-area: node;
-}
-
-#sidebar-line {
-    grid-area: line;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
 }
 
 .tooltip {

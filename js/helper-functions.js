@@ -54,8 +54,10 @@ function drawNode(node, svg) {
 function drawFeatures(features, svg) {
     svg.width = features.floorPlanBounds.w;
     svg.height = features.floorPlanBounds.h;
-    floorPlanBackground.src = "";
-    floorPlanBackground.src = features.floorPlanSrc;
+    if (floorPlanBackground.src !== features.floorPlanSrc) {
+        floorPlanBackground.src = "";
+        floorPlanBackground.src = features.floorPlanSrc;
+    }
     for (let line of features.lines) {
         drawLine(line, svg);
     }

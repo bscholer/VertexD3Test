@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="index.css"/>
-    <link rel="stylesheet" type="text/css" href="settings-modal.css"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/settings-modal.css"/>
     <meta charset="UTF-8">
     <title>Vertex Test</title>
 </head>
@@ -27,6 +27,8 @@
             localStorage.setItem('defaultLineType',
             document.getElementById('default-line-type-select').value);
         }"></select>
+        <label for="show-floor-plan-input">Show Floor Plan</label>
+        <input value="true" id="show-floor-plan-input">
     </div>
 </div>
 <div id="floor-plan-container">
@@ -154,14 +156,14 @@
     </div>
 </div>
 
-<script src="css-color-names.js"></script>
-<script src="d3.js"></script>
-<script src="jquery-3.4.1.min.js"></script>
-<script src="jquery.mask.min.js"></script>
-<script src="helper-functions.js"></script>
-<script src="index.js"></script>
-<script src="settings-modal.js"></script>
-<script src="node-edit-dialog.js"></script>
-<script src="line-edit-dialog.js"></script>
+<script src="js/css-color-names.js"></script>
+<script src="js/d3.js"></script>
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/jquery.mask.min.js"></script>
+<script src="js/helper-functions.js"></script>
+<script src="js/index.js"></script>
+<script src="js/settings-modal.js"></script>
+<script src="js/node-edit-dialog.js"></script>
+<script src="js/line-edit-dialog.js"></script>
 </body>
 </html>

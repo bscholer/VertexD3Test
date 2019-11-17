@@ -179,6 +179,10 @@ function openImage() {
     features.floorPlanBounds.h = floorPlanBackground.height;
 }
 
+function showFloorPlan() {
+
+}
+
 let defaultLineTypeSelect = document.getElementById("default-line-type-select");
 let defaultNodeTypeSelect = document.getElementById("default-node-type-select");
 
