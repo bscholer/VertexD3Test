@@ -10,6 +10,7 @@ Due to some part of the instructions for this assignment being unclear, I wrote 
 6) The default node and line types, as well as all node and line types are automatically saved to the browser's localStorage. This is for ease of use.
 7) I thought it would make more sense to just store the start and end node ID's for each line, as it saves on data and speed, and also makes it so that if the position of a node is changed, so are the lines connected to it. Because of this, from_node_id and to_node_id coordinates *are* downloaded as per the instructions, however, are not used.
 8) Lines must have 2 *existing* nodes to connect to. Therefore, when a node with line(s) connected to it is deleted, so are said line(s).
+9) A dummy floor plan is included by default, along with another in the site's directory.
 
 I appreciate the opportunity to do this test, as it has been fun to do, and I've learned quite a bit about d3 along the way.
 
