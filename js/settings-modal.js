@@ -43,6 +43,9 @@ let lineColorSelect = document.getElementById("line-color-select");
 let lineWeightInput = document.getElementById("line-weight-input");
 
 function openNodeMenu (nodeTypeID) {
+    document.getElementById("settings-node-tab").style.backgroundColor = "#aaaaaa";
+    document.getElementById("settings-line-tab").style.backgroundColor = "white";
+    nodeTypeID = nodeTypeID || 0;
     nodeMenu.style.display = "block";
     lineMenu.style.display = "none";
     while (nodeTypeSelect.firstChild) {
@@ -54,12 +57,14 @@ function openNodeMenu (nodeTypeID) {
         newNodeTypeOption.innerText = nodeType.name;
         nodeTypeSelect.appendChild(newNodeTypeOption);
     }
-    if (!nodeTypeID) nodeTypeID = 0;
     nodeTypeSelect.value = nodeTypeID;
     populateNodeMenu(nodeTypeID);
 }
 
 function openLineMenu (lineTypeID) {
+    document.getElementById("settings-node-tab").style.backgroundColor = "white";
+    document.getElementById("settings-line-tab").style.backgroundColor = "#aaaaaa";
+    lineTypeID = lineTypeID || 0;
     nodeMenu.style.display = "none";
     lineMenu.style.display = "block";
     while (lineTypeSelect.firstChild) {
@@ -71,7 +76,6 @@ function openLineMenu (lineTypeID) {
         newLineTypeOption.innerText = lineType.name;
         lineTypeSelect.appendChild(newLineTypeOption);
     }
-    if (!lineTypeID) lineTypeID = 0;
     lineTypeSelect.value = lineTypeID;
     populateLineMenu(lineTypeID);
 }

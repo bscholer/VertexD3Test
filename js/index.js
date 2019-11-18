@@ -5,6 +5,8 @@ Due to some part of the instructions for this assignment being unclear, I wrote 
 2) Due to healthy 'mistrust' of users to create unique names, I use a node/line ID as the unique value instead of the name.
 3) There is no other mention to bi-directionality for lines in the instructions, so it's a simple boolean value that doesn't really do anything. It can be changed per line though.
 4) After changing the settings for node/line types, existing nodes/lines are NOT updated. Doing it this way would make it easy to accidentally 'delete' any customizations made to existing nodes/lines.
+5) When downloading a drawing, the background image comes with it. It doesn't really make sense to store the bounds, but not the image itself.
+6) The default node and line types, as well as all node and line types are automatically saved to the browser's localStorage. This is for ease of use.
  */
 
 // Masking a few inputs throughout the site, preventing users from entering huge numbers.
@@ -163,6 +165,21 @@ let lineCounter = 0;
 // Used only if a click is starting a line
 let lineStartNodeID;
 
+// Listen for attribute changes to the floor plan background.
+// For whatever reason, width and height weren't being updated when the src was set.
+let floorPlanBackgroundObserver = new MutationObserver(function (mutations) {
+    floorPlanBackground = document.querySelector('#floor-plan-background');
+    features.floorPlanBounds.w = floorPlanBackground.width;
+    features.floorPlanBounds.h = floorPlanBackground.height;
+    svg.width = floorPlanBackground.width;
+    svg.height = floorPlanBackground.height;
+    reset(svg);
+});
+
+floorPlanBackgroundObserver.observe(floorPlanBackground, {
+    attributes: true // Listen for attribute changes
+});
+
 function openImage() {
     let file = document.querySelector('#floor-plan-upload-input').files[0];
     let reader = new FileReader();
@@ -175,12 +192,96 @@ function openImage() {
     if (file) {
         reader.readAsDataURL(file);
     }
-    features.floorPlanBounds.w = floorPlanBackground.width;
-    features.floorPlanBounds.h = floorPlanBackground.height;
 }
 
-function showFloorPlan() {
+function openDrawing() {
+    let file = document.querySelector('#drawing-upload-input').files[0];
+    let reader = new FileReader();
 
+    reader.addEventListener("load", function () {
+        let upload = JSON.parse(reader.result);
+        features.floorPlanSrc = upload.floorPlanSrc;
+        features.floorPlanBounds = upload.floorPlanBounds;
+        floorPlanBackground.src = features.floorPlanSrc;
+        features.nodes = upload.nodes;
+        // Set all nodes to visible
+        for (let node of features.nodes) node.invisible = false;
+        features.lines = upload.lines;
+        // Set all lines to visible
+        for (let line of features.lines) line.invisible = false;
+        reset(svg);
+    });
+
+    if (file) {
+        reader.readAsText(file);
+    }
+}
+
+function openTypes() {
+    let file = document.querySelector('#types-upload-input').files[0];
+    let reader = new FileReader();
+
+    reader.addEventListener("load", function () {
+        let upload = JSON.parse(reader.result);
+        console.log(upload);
+        features.nodeTypes = upload.nodeTypes;
+        features.lineTypes = upload.lineTypes;
+        localStorage.setItem("lineTypes", JSON.stringify(upload.lineTypes));
+        localStorage.setItem("nodeTypes", JSON.stringify(upload.nodeTypes));
+
+        // Update the node type select in the settings menu.
+        while (nodeTypeSelect.firstChild) {
+            nodeTypeSelect.removeChild(nodeTypeSelect.firstChild);
+        }
+        for (let nodeType of features.nodeTypes) {
+            let newNodeTypeOption = document.createElement("option");
+            newNodeTypeOption.value = nodeType.nodeTypeID;
+            newNodeTypeOption.innerText = nodeType.name;
+            nodeTypeSelect.appendChild(newNodeTypeOption);
+        }
+
+        // Update the node type select in the settings menu.
+        while (lineTypeSelect.firstChild) {
+            lineTypeSelect.removeChild(lineTypeSelect.firstChild);
+        }
+        for (let lineType of features.lineTypes) {
+            let newLineTypeOption = document.createElement("option");
+            newLineTypeOption.value = lineType.lineTypeID;
+            newLineTypeOption.innerText = lineType.name;
+            lineTypeSelect.appendChild(newLineTypeOption);
+        }
+        reset(svg);
+    });
+
+    if (file) {
+        reader.readAsText(file);
+    }
+}
+
+function nodeVisibilityChange() {
+    let nodeTypeID = document.getElementById("node-type-select").value;
+    for (let node of features.nodes) {
+        if (node.nodeTypeID === nodeTypeID) {
+            node.invisible = !document.getElementById("node-visibility").checked;
+        }
+    }
+    reset(svg);
+}
+
+function lineVisibilityChange() {
+    let lineTypeID = document.getElementById("line-type-select").value;
+    for (let line of features.lines) {
+        if (line.lineTypeID === lineTypeID) {
+            line.invisible = !document.getElementById("line-visibility").checked;
+        }
+    }
+    reset(svg);
+}
+
+// Called on change of the show floor plan checkbox.
+function showFloorPlan() {
+    let checkbox = document.getElementById("show-floor-plan-input");
+    floorPlanBackground.style.display = (checkbox.checked) ? "block" : "none";
 }
 
 let defaultLineTypeSelect = document.getElementById("default-line-type-select");
@@ -245,9 +346,7 @@ svg.on("click", function () {
         nodeTooltip.nodeID = findNodeCollision(coords[0], coords[1], 100);
         let nodeTooltipTitle = document.getElementById("node-tooltip-title");
         nodeTooltipTitle.innerText = findNode(nodeTooltip.nodeID).name;
-    }
-
-    else if (findLineCollision(coords[0], coords[1])) {
+    } else if (findLineCollision(coords[0], coords[1])) {
         lineTooltip.style.top = coords[1] + "px";
         lineTooltip.style.left = coords[0] + "px";
         lineTooltip.style.display = "block";
@@ -318,16 +417,33 @@ function downloadDrawing() {
     drawing.floorPlanBounds = features.floorPlanBounds;
     drawing.nodes = features.nodes;
     drawing.lines = features.lines;
-    let types = {};
-    types.lineTypes = features.lineTypes;
-    types.nodeTypes = features.nodeTypes;
+    for (let line of drawing.lines) {
+        let startNode = findNode(line.startNodeID);
+        let endNode = findNode(line.endNodeID);
+        line.from_node_id = {
+            x: startNode.x,
+            y: startNode.y
+        };
+        line.to_node_id = {
+            x: endNode.x,
+            y: endNode.y
+        };
+    }
     let drawingData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(drawing));
-    let typesData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(types));
     let downloadAnchor = document.getElementById("downloadDrawingAnchor");
     downloadAnchor.setAttribute("href", drawingData);
     downloadAnchor.setAttribute("download", "drawing.json");
     downloadAnchor.click();
+}
+
+function downloadTypes() {
+    let types = {};
+    types.lineTypes = features.lineTypes;
+    types.nodeTypes = features.nodeTypes;
+    let typesData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(types));
+    let downloadAnchor = document.getElementById("downloadTypesAnchor");
     downloadAnchor.setAttribute("href", typesData);
     downloadAnchor.setAttribute("download", "types.json");
     downloadAnchor.click();
+
 }
