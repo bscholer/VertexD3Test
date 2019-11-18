@@ -1,7 +1,7 @@
 Vertex Intelligence d3.js Test
 
 **NOTE TO THE GRADER**:
-Due to some part of the instructions for this assignment being unclear, I wrote this site on the following assumptions:
+Due to some parts of the instructions for this assignment being unclear, I wrote this site on the following assumptions:
 1) When creating a new node/line, the initial attributes for it (color, stroke, name, etc.) are based off of the 'parent' node/line type.
 2) Due to healthy 'mistrust' of users to create unique names, I use a node/line ID as the unique value instead of the name. The name is set to the name of its type.
 3) There is no other mention to bi-directionality for lines in the instructions, so it's a simple boolean value that doesn't really do anything. It can be changed per line though.
