@@ -1,13 +1,17 @@
+// Load types from localStorage. These are replaced if types are uploaded.
 if (localStorage.getItem("nodeTypes")) {
     features.nodeTypes = JSON.parse(localStorage.getItem("nodeTypes"));
 }
+// Save it if it doesn't exist.
 else {
     localStorage.setItem("nodeTypes", JSON.stringify(features.nodeTypes));
 }
 
+// Load types from localStorage. These are replaced if types are uploaded.
 if (localStorage.getItem("lineTypes")) {
     features.lineTypes = JSON.parse(localStorage.getItem("lineTypes"));
 }
+// Save it if it doesn't exist.
 else {
     localStorage.setItem("lineTypes", JSON.stringify(features.lineTypes));
 }
@@ -42,12 +46,20 @@ let lineStrokeSelect = document.getElementById("line-stroke-select");
 let lineColorSelect = document.getElementById("line-color-select");
 let lineWeightInput = document.getElementById("line-weight-input");
 
-function openNodeMenu (nodeTypeID) {
+// Opening the node menu
+function openNodeMenu(nodeTypeID) {
+    // Get the tabs, and set their colors
     document.getElementById("settings-node-tab").style.backgroundColor = "#aaaaaa";
     document.getElementById("settings-line-tab").style.backgroundColor = "white";
-    nodeTypeID = nodeTypeID || 0;
+
+    // Switch menus
     nodeMenu.style.display = "block";
     lineMenu.style.display = "none";
+
+    // If the nodeTypeID is null, make it 0
+    nodeTypeID = nodeTypeID || 0;
+
+    // Update the node type select in the settings menu.
     while (nodeTypeSelect.firstChild) {
         nodeTypeSelect.removeChild(nodeTypeSelect.firstChild);
     }
@@ -57,16 +69,24 @@ function openNodeMenu (nodeTypeID) {
         newNodeTypeOption.innerText = nodeType.name;
         nodeTypeSelect.appendChild(newNodeTypeOption);
     }
+
     nodeTypeSelect.value = nodeTypeID;
     populateNodeMenu(nodeTypeID);
 }
 
-function openLineMenu (lineTypeID) {
+function openLineMenu(lineTypeID) {
+    // Get the tabs, and set their colors
     document.getElementById("settings-node-tab").style.backgroundColor = "white";
     document.getElementById("settings-line-tab").style.backgroundColor = "#aaaaaa";
-    lineTypeID = lineTypeID || 0;
+
+    // Switch menus
     nodeMenu.style.display = "none";
     lineMenu.style.display = "block";
+
+    // If the lineTypeID is null, make it 0
+    lineTypeID = lineTypeID || 0;
+
+    // Update the line type select in the settings menu.
     while (lineTypeSelect.firstChild) {
         lineTypeSelect.removeChild(lineTypeSelect.firstChild);
     }
@@ -76,14 +96,17 @@ function openLineMenu (lineTypeID) {
         newLineTypeOption.innerText = lineType.name;
         lineTypeSelect.appendChild(newLineTypeOption);
     }
+
     lineTypeSelect.value = lineTypeID;
     populateLineMenu(lineTypeID);
 }
 
-function populateNodeMenu (nodeTypeID) {
+// Populate the node menu
+function populateNodeMenu(nodeTypeID) {
     populateColorSelect(nodeColorSelect);
     for (let nodeType of features.nodeTypes) {
         if (nodeType.nodeTypeID === nodeTypeID + "") {
+            // Fill in the blanks
             nodeNameInput.value = nodeType.name;
             nodeShapeSelect.value = nodeType.shape;
             nodeColorSelect.value = nodeType.color;
@@ -91,12 +114,13 @@ function populateNodeMenu (nodeTypeID) {
     }
 }
 
-function populateLineMenu (lineTypeID) {
+// Populate the line menu
+function populateLineMenu(lineTypeID) {
     populateColorSelect(lineColorSelect);
     for (let lineType of features.lineTypes) {
         if (lineType.lineTypeID === lineTypeID + "") {
+            // Fill in the blanks
             lineNameInput.value = lineType.name;
-            console.log(lineType.stroke);
             lineStrokeSelect.value = lineType.stroke;
             lineColorSelect.value = lineType.color;
             lineWeightInput.value = lineType.weight;
@@ -104,27 +128,8 @@ function populateLineMenu (lineTypeID) {
     }
 }
 
-// When the user clicks on the button, open the modal
-btn.onclick = function() {
-    modal.style.display = "block";
-};
-
-// Default to the node menu
-nodeTabBtn.click();
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    modal.style.display = "none";
-};
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-};
-
-function populateColorSelect (selectElement) {
+// Populate a color select with colors from css-color-names.js
+function populateColorSelect(selectElement) {
     for (let cssColor of colorNames) {
         let newColorOption = document.createElement("option");
         newColorOption.value = cssColor.name;
@@ -133,6 +138,7 @@ function populateColorSelect (selectElement) {
     }
 }
 
+// Save the node types--this could be easily turned into an AJAX call.
 function autoSaveNodeTypes() {
     for (let nodeType of features.nodeTypes) {
         if (nodeTypeSelect.value === nodeType.nodeTypeID) {
@@ -141,11 +147,17 @@ function autoSaveNodeTypes() {
             nodeType.color = nodeColorSelect.value;
         }
     }
+
     localStorage.setItem("nodeTypes", JSON.stringify(features.nodeTypes));
+
+    // Repopulate everything
     openNodeMenu(nodeTypeSelect.value);
+
+    // Redraw
     reset(svg);
 }
 
+// Save the line types--this could be easily turned into an AJAX call.
 function autoSaveLineTypes() {
     for (let lineType of features.lineTypes) {
         if (lineTypeSelect.value === lineType.lineTypeID) {
@@ -155,8 +167,25 @@ function autoSaveLineTypes() {
             lineType.weight = lineWeightInput.value;
         }
     }
+
     localStorage.setItem("lineTypes", JSON.stringify(features.lineTypes));
+
+    // Repopulate everything
     openLineMenu(lineTypeSelect.value);
+
+    // Redraw
     reset(svg);
 }
 
+// When the user clicks on the button, open the modal
+btn.onclick = function () {
+    modal.style.display = "block";
+};
+
+// Default to the node menu
+nodeTabBtn.click();
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+    modal.style.display = "none";
+};
